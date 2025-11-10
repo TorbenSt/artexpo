@@ -3,30 +3,59 @@
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
+use App\Http\Controllers\ExhibitionController;
+use App\Http\Controllers\ImageController;
 
+// Home Route
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Öffentliche Routen (readonly)
+Route::prefix('exhibitions')->name('exhibitions.')->group(function () {
+    Route::get('/', [ExhibitionController::class, 'index'])->name('index');
+    Route::get('/{exhibition}', [ExhibitionController::class, 'show'])->name('show');
+});
 
-Route::middleware(['auth'])->group(function () {
-    Route::redirect('settings', 'settings/profile');
+Route::prefix('images')->name('images.')->group(function () {
+    Route::get('/', [ImageController::class, 'index'])->name('index');
+    Route::get('/{image}', [ImageController::class, 'show'])->name('show');
+});
 
-    Volt::route('settings/profile', 'settings.profile')->name('profile.edit');
-    Volt::route('settings/password', 'settings.password')->name('user-password.edit');
-    Volt::route('settings/appearance', 'settings.appearance')->name('appearance.edit');
-
-    Volt::route('settings/two-factor', 'settings.two-factor')
-        ->middleware(
-            when(
-                Features::canManageTwoFactorAuthentication()
-                    && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
-                ['password.confirm'],
-                [],
-            ),
-        )
-        ->name('two-factor.show');
+// Auth-geschützte Routen
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Dashboard
+    Route::view('dashboard', 'dashboard')->name('dashboard');
+    
+    // Admin/Management Routen
+    Route::prefix('admin')->name('admin.')->group(function () {
+        // Exhibitions Management
+        Route::resource('exhibitions', ExhibitionController::class)
+            ->except(['index', 'show']); // nur create, store, edit, update, destroy
+        
+        // Images Management  
+        Route::resource('images', ImageController::class)
+            ->except(['index', 'show']);
+    });
+    
+    // Settings Routen
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::redirect('/', 'settings/profile');
+        
+        Volt::route('profile', 'settings.profile')->name('profile.edit');
+        Volt::route('password', 'settings.password')->name('user-password.edit');
+        Volt::route('appearance', 'settings.appearance')->name('appearance.edit');
+        
+        if (Features::canManageTwoFactorAuthentication()) {
+            Volt::route('two-factor', 'settings.two-factor')
+                ->middleware(
+                    when(
+                        Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
+                        ['password.confirm'],
+                        [],
+                    ),
+                )
+                ->name('two-factor.show');
+        }
+    });
 });
