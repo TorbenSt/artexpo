@@ -12,7 +12,8 @@ class ExhibitionController extends Controller
      */
     public function index()
     {
-        //
+        $exhibitions = Exhibition::orderBy('start_date', 'desc')->paginate(10);
+        return view('exhibitions.index', compact('exhibitions'));
     }
 
     /**
@@ -20,7 +21,7 @@ class ExhibitionController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.exhibitions.create');
     }
 
     /**
@@ -28,7 +29,27 @@ class ExhibitionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'subtitle' => 'nullable|string|max:255',
+            'intro_text' => 'nullable|string',
+            'text' => 'nullable|string',
+            'artist' => 'nullable|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'program_booklet' => 'nullable|url',
+            'program_booklet_cover' => 'nullable|url',
+            'flyer' => 'nullable|url',
+            'flyer_cover' => 'nullable|url',
+            'creative_booklet' => 'nullable|url',
+            'creative_booklet_cover' => 'nullable|url',
+            'ticket_link' => 'nullable|url',
+        ]);
+
+        $exhibition = Exhibition::create($validated);
+
+        return redirect()->route('admin.exhibitions.edit', $exhibition)
+            ->with('success', 'Exhibition created successfully.');
     }
 
     /**
@@ -36,7 +57,7 @@ class ExhibitionController extends Controller
      */
     public function show(Exhibition $exhibition)
     {
-        //
+        return view('exhibitions.show', compact('exhibition'));
     }
 
     /**
@@ -44,7 +65,7 @@ class ExhibitionController extends Controller
      */
     public function edit(Exhibition $exhibition)
     {
-        //
+        return view('admin.exhibitions.edit', compact('exhibition'));
     }
 
     /**
@@ -52,7 +73,27 @@ class ExhibitionController extends Controller
      */
     public function update(Request $request, Exhibition $exhibition)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'subtitle' => 'nullable|string|max:255',
+            'intro_text' => 'nullable|string',
+            'text' => 'nullable|string',
+            'artist' => 'nullable|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'program_booklet' => 'nullable|url',
+            'program_booklet_cover' => 'nullable|url',
+            'flyer' => 'nullable|url',
+            'flyer_cover' => 'nullable|url',
+            'creative_booklet' => 'nullable|url',
+            'creative_booklet_cover' => 'nullable|url',
+            'ticket_link' => 'nullable|url',
+        ]);
+
+        $exhibition->update($validated);
+
+        return redirect()->back()
+            ->with('success', 'Exhibition updated successfully.');
     }
 
     /**
@@ -60,6 +101,9 @@ class ExhibitionController extends Controller
      */
     public function destroy(Exhibition $exhibition)
     {
-        //
+        $exhibition->delete();
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Exhibition deleted successfully.');
     }
 }

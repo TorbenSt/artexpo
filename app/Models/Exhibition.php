@@ -18,14 +18,13 @@ class Exhibition extends Model
         'artist',
         'start_date',
         'end_date',
-        'location',
         'program_booklet',
         'program_booklet_cover',
         'flyer',
         'flyer_cover',
         'creative_booklet',
         'creative_booklet_cover',
-        'ticketlink'
+        'ticket_link'
     ];
 
     protected $casts = [

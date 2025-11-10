@@ -11,7 +11,7 @@ class UpdateImageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true; // Authorization should be handled by middleware
     }
 
     /**

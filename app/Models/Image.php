@@ -26,4 +26,9 @@ class Image extends Model
 
     // Type: 'public' oder 'press'
     // Position: String-Feld für Erweiterbarkeit (z.B. 'StartSeiteSlide'), kann später als Enum erweitert werden
+
+    public function exhibition()
+    {
+        return $this->belongsTo(Exhibition::class);
+    }
 }
