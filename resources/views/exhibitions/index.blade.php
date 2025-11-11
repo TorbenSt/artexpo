@@ -12,7 +12,7 @@
             <div class="bg-white shadow rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
                 <a href="{{ route('exhibitions.show', $exhibition) }}" class="block">
                     @if($exhibition->images()->where('visible', true)->first())
-                        <img src="{{ asset('storage/' . $exhibition->images()->where('visible', true)->first()->path) }}" 
+                        <img src="{{ asset($exhibition->images()->where('visible', true)->first()->path) }}" 
                              alt="{{ $exhibition->title }}" class="w-full h-48 object-cover">
                     @else
                         <div class="w-full h-48 bg-gray-200 flex items-center justify-center">

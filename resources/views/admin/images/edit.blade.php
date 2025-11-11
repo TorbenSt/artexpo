@@ -14,7 +14,7 @@
             <!-- Aktuelles Bild anzeigen -->
             <div class="mb-6">
                 <h3 class="text-lg font-semibold mb-2">Aktuelles Bild</h3>
-                <img src="{{ asset('storage/' . $image->path) }}" alt="Aktuelles Bild" 
+                <img src="{{ asset($image->path) }}" alt="Aktuelles Bild" 
                      class="max-w-xs h-auto rounded-lg shadow">
             </div>
 

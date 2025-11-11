@@ -117,7 +117,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-5 gap-2">
                             @foreach($recentImages as $image)
                                 <div class="relative">
-                                    <img src="{{ asset('storage/' . $image->path) }}" 
+                                    <img src="{{ asset($image->path) }}" 
                                          alt="Recent image" 
                                          class="w-full h-20 object-cover rounded">
                                     <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b">

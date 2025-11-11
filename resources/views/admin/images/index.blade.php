@@ -54,7 +54,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @forelse($images as $image)
             <div class="bg-white shadow rounded-lg overflow-hidden">
-                <img src="{{ asset('storage/' . $image->path) }}" alt="Bild" class="w-full h-48 object-cover">
+                <img src="{{ asset($image->path) }}" alt="Bild" class="w-full h-48 object-cover">
                 <div class="p-4">
                     <h3 class="font-semibold text-lg">{{ $image->exhibition->title }}</h3>
                     <p class="text-gray-600 text-sm">Typ: {{ ucfirst($image->type) }}</p>

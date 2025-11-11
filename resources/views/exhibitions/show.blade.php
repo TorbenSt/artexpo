@@ -38,7 +38,7 @@
         @if($exhibition->images()->where('visible', true)->where('position', 'hero')->first())
             <div class="mb-8">
                 @php $heroImage = $exhibition->images()->where('visible', true)->where('position', 'hero')->first(); @endphp
-                <img src="{{ asset('storage/' . $heroImage->path) }}" 
+                <img src="{{ asset($heroImage->path) }}" 
                      alt="{{ $exhibition->title }}" 
                      class="w-full max-h-96 object-cover rounded-lg shadow-lg">
                 @if($heroImage->credits)
@@ -63,7 +63,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach($galleryImages as $image)
                         <div class="group">
-                            <img src="{{ asset('storage/' . $image->path) }}" 
+                            <img src="{{ asset($image->path) }}" 
                                  alt="Ausstellungsbild" 
                                  class="w-full h-48 object-cover rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer">
                             @if($image->credits)

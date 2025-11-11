@@ -155,7 +155,7 @@
                         <div class="space-y-2">
                             @foreach($exhibition->images->take(3) as $image)
                                 <div class="flex items-center space-x-2">
-                                    <img src="{{ asset('storage/' . $image->path) }}" 
+                                    <img src="{{ asset($image->path) }}" 
                                          class="w-12 h-12 object-cover rounded">
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm text-gray-900 truncate">{{ $image->position ?: 'Ohne Position' }}</p>

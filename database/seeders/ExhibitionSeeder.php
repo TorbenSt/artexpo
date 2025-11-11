@@ -13,9 +13,9 @@ class ExhibitionSeeder extends Seeder
      */
     public function run(): void
     {
-        // Erstelle 10 Exhibitions
+        // Erstelle nur 3 Exhibitions für schnelleres Seeding
         Exhibition::factory()
-            ->count(10)
+            ->count(3)
             ->create();
     }
 }

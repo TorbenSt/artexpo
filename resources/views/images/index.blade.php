@@ -43,7 +43,7 @@
         @forelse($images as $image)
             <div class="bg-white shadow rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
                 <a href="{{ route('images.show', $image) }}" class="block">
-                    <img src="{{ asset('storage/' . $image->path) }}" alt="Bild" class="w-full h-48 object-cover">
+                    <img src="{{ asset($image->path) }}" alt="Bild" class="w-full h-48 object-cover">
                     <div class="p-4">
                         <h3 class="font-semibold text-lg">{{ $image->exhibition->title }}</h3>
                         @if($image->position)
