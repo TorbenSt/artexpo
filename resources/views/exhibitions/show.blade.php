@@ -14,10 +14,18 @@
                     {{ $exhibition->start_date->format('d.m.Y') }} - {{ $exhibition->end_date->format('d.m.Y') }}
                 </p>
             </div>
-            <a href="{{ route('exhibitions.index') }}" 
-               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                Zurück zur Übersicht
-            </a>
+            <div class="flex space-x-2">
+                @auth
+                    <a href="{{ route('admin.exhibitions.edit', $exhibition) }}" 
+                       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Bearbeiten
+                    </a>
+                @endauth
+                <a href="{{ route('exhibitions.index') }}" 
+                   class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    Zurück zur Übersicht
+                </a>
+            </div>
         </div>
 
         @if($exhibition->intro_text)

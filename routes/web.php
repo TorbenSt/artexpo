@@ -6,10 +6,8 @@ use Livewire\Volt\Volt;
 use App\Http\Controllers\ExhibitionController;
 use App\Http\Controllers\ImageController;
 
-// Home Route
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// Home Route - direkt zu Ausstellungen
+Route::get('/', [ExhibitionController::class, 'index'])->name('home');
 
 // Öffentliche Routen (readonly)
 Route::prefix('exhibitions')->name('exhibitions.')->group(function () {
