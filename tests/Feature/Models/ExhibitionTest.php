@@ -20,14 +20,16 @@ describe('Public Exhibition Routes', function () {
         
         $response = $this->get(route('exhibitions.index'));
         
-        $response->assertStatus(500); // Will fail due to missing view
-    })->skip('Views not implemented yet');
+        $response->assertStatus(200);
+        $response->assertViewIs('exhibitions.index');
+    });
     
     test('can view single exhibition', function () {
         $response = $this->get(route('exhibitions.show', $this->exhibition));
         
-        $response->assertStatus(500); // Will fail due to missing view
-    })->skip('Views not implemented yet');
+        $response->assertStatus(200);
+        $response->assertViewIs('exhibitions.show');
+    });
 });
 
 describe('Admin Exhibition Routes', function () {
@@ -49,14 +51,16 @@ describe('Admin Exhibition Routes', function () {
     test('authenticated user can access admin exhibition create and edit routes', function () {
         $this->actingAs($this->user);
         
-        // Test create form (skip view rendering for now)
+        // Test create form
         $response = $this->get(route('admin.exhibitions.create'));
-        $response->assertStatus(500); // Will fail due to missing view, but route works
+        $response->assertStatus(200);
+        $response->assertViewIs('admin.exhibitions.create');
         
-        // Test edit form (skip view rendering for now)
+        // Test edit form
         $response = $this->get(route('admin.exhibitions.edit', $this->exhibition));
-        $response->assertStatus(500); // Will fail due to missing view, but route works
-    })->skip('Views not implemented yet');
+        $response->assertStatus(200);
+        $response->assertViewIs('admin.exhibitions.edit');
+    });
 });
 
 describe('Exhibition CRUD Operations', function () {
