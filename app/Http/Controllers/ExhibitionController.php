@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Exhibition;
+use App\Http\Requests\StoreExhibitionRequest;
+use App\Http\Requests\UpdateExhibitionRequest;
 use Illuminate\Http\Request;
 
 class ExhibitionController extends Controller
@@ -27,26 +29,9 @@ class ExhibitionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreExhibitionRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'subtitle' => 'nullable|string|max:255',
-            'intro_text' => 'nullable|string',
-            'text' => 'nullable|string',
-            'artist' => 'nullable|string|max:255',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
-            'program_booklet' => 'nullable|url',
-            'program_booklet_cover' => 'nullable|url',
-            'flyer' => 'nullable|url',
-            'flyer_cover' => 'nullable|url',
-            'creative_booklet' => 'nullable|url',
-            'creative_booklet_cover' => 'nullable|url',
-            'ticket_link' => 'nullable|url',
-        ]);
-
-        $exhibition = Exhibition::create($validated);
+        $exhibition = Exhibition::create($request->validated());
 
         return redirect()->route('admin.exhibitions.edit', $exhibition)
             ->with('success', 'Exhibition created successfully.');
@@ -71,26 +56,9 @@ class ExhibitionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Exhibition $exhibition)
+    public function update(UpdateExhibitionRequest $request, Exhibition $exhibition)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'subtitle' => 'nullable|string|max:255',
-            'intro_text' => 'nullable|string',
-            'text' => 'nullable|string',
-            'artist' => 'nullable|string|max:255',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
-            'program_booklet' => 'nullable|url',
-            'program_booklet_cover' => 'nullable|url',
-            'flyer' => 'nullable|url',
-            'flyer_cover' => 'nullable|url',
-            'creative_booklet' => 'nullable|url',
-            'creative_booklet_cover' => 'nullable|url',
-            'ticket_link' => 'nullable|url',
-        ]);
-
-        $exhibition->update($validated);
+        $exhibition->update($request->validated());
 
         return redirect()->back()
             ->with('success', 'Exhibition updated successfully.');
