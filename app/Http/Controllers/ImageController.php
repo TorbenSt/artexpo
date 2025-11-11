@@ -8,47 +8,90 @@ use App\Models\Exhibition;
 use App\Http\Requests\StoreImageRequest;
 use App\Http\Requests\UpdateImageRequest;
 use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Drivers\Imagick\Driver;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
 class ImageController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Image::with('exhibition');
+        
+        // Für öffentliche Ansicht: nur sichtbare Bilder anzeigen
+        if (!auth()->check()) {
+            $query->where('visible', true);
+        }
+        
+        // Filter nach Typ
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+        
+        // Filter nach Ausstellung
+        if ($request->filled('exhibition_id')) {
+            $query->where('exhibition_id', $request->exhibition_id);
+        }
+        
+        // Filter nach Sichtbarkeit (nur für angemeldete Benutzer)
+        if ($request->filled('visible') && auth()->check()) {
+            $query->where('visible', $request->boolean('visible'));
+        }
+        
+        // Sortierung
+        $sortBy = $request->get('sort', 'created_at');
+        $sortDirection = $request->get('direction', 'desc');
+        
+        $query->orderBy($sortBy, $sortDirection);
+        
+        $images = $query->paginate(20);
+        $exhibitions = Exhibition::all();
+        
+        // Unterscheidung zwischen öffentlicher und Admin-Ansicht
+        if (auth()->check()) {
+            return view('admin.images.index', compact('images', 'exhibitions'));
+        } else {
+            return view('images.index', compact('images', 'exhibitions'));
+        }
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $exhibitions = Exhibition::all();
+        $selectedExhibition = $request->get('exhibition_id');
+        
+        return view('admin.images.create', compact('exhibitions', 'selectedExhibition'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreImageRequest $request, Exhibition $exhibition)
+    public function store(StoreImageRequest $request)
     {
         $file = $request->file('image');
+        $exhibitionId = $request->input('exhibition_id');
         $type = $request->input('type', 'public');
         $position = $request->input('position');
         $credits = $request->input('credits');
         $visible = $request->boolean('visible', true);
 
+        $exhibition = Exhibition::findOrFail($exhibitionId);
+
         // 1. Original (nur bei Presse)
         $originalPath = $type === 'press' ? $file->store('press/original', 'public') : null;
 
-        // 2. Resized Version (1920px Breite, max)
+        // 2. Resized Version (1920px Breite, max) mit Imagick
         $manager = new ImageManager(new Driver());
-        $img = $manager->read($file)->scaleDown(1920);
+        $img = $manager->read($file->getPathname())->scaleDown(1920);
 
-        $filename = Str::random(12) . '.' . $file->extension();
+        $filename = Str::random(12) . '.' . $file->getClientOriginalExtension();
         $path = 'exhibitions/' . $exhibition->id . '/' . $filename;
 
         Storage::disk('public')->put($path, $img->encode());
@@ -64,7 +107,7 @@ class ImageController extends Controller
             'position' => $position,
         ]);
 
-        return redirect()->back()->with('success', 'Bild hochgeladen');
+        return redirect()->route('images.index')->with('success', 'Bild erfolgreich hochgeladen');
     }
 
     /**
@@ -72,7 +115,7 @@ class ImageController extends Controller
      */
     public function show(Image $image)
     {
-        //
+        return response()->file(storage_path('app/public/' . $image->path));
     }
 
     /**
@@ -80,7 +123,8 @@ class ImageController extends Controller
      */
     public function edit(Image $image)
     {
-        //
+        $exhibitions = Exhibition::all();
+        return view('admin.images.edit', compact('image', 'exhibitions'));
     }
 
     /**

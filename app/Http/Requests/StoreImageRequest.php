@@ -22,6 +22,7 @@ class StoreImageRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'exhibition_id' => 'required|exists:exhibitions,id',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:10240',
             'type' => 'required|in:public,press',
             'position' => 'nullable|string|max:50',
