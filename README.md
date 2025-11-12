@@ -1,6 +1,6 @@
 # ArtExpo - Laravel Exhibition Management System
 
-Ein modernes Laravel-basiertes Content Management System für die Verwaltung von Kunstausstellungen und Bildern.
+Ein modernes Laravel-basiertes Content Management System als Microservice für die Verwaltung von Kunstausstellungen und Bildern.
 
 ## 🎨 Features
 
@@ -13,7 +13,7 @@ Ein modernes Laravel-basiertes Content Management System für die Verwaltung von
 
 ## 🛠 Tech Stack
 
-- **Framework**: Laravel 11
+- **Framework**: Laravel 12
 - **Frontend**: Livewire + Flux UI Components
 - **Database**: MySQL/PostgreSQL
 - **Authentication**: Laravel Fortify
