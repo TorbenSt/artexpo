@@ -65,9 +65,16 @@
                         <p class="text-gray-600 text-sm">Credits: {{ $image->credits }}</p>
                     @endif
                     <div class="flex justify-between items-center mt-4">
-                        <span class="px-2 py-1 rounded text-xs {{ $image->visible ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                            {{ $image->visible ? 'Sichtbar' : 'Versteckt' }}
-                        </span>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2 py-1 rounded text-xs {{ $image->visible ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                {{ $image->visible ? 'Sichtbar' : 'Versteckt' }}
+                            </span>
+
+                            {{-- Social media badge --}}
+                            <span class="px-2 py-1 rounded text-xs {{ $image->for_social_media ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600' }}">
+                                {{ $image->for_social_media ? 'Social Media' : 'Kein Social Media' }}
+                            </span>
+                        </div>
                         <div class="flex space-x-2">
                             <a href="{{ route('admin.images.edit', $image) }}" class="text-blue-600 hover:text-blue-900">Bearbeiten</a>
                             <form method="POST" action="{{ route('admin.images.destroy', $image) }}" class="inline">

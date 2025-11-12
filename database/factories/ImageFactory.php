@@ -26,6 +26,7 @@ class ImageFactory extends Factory
             'original_path' => $type === 'press' ? 'images/original/' . $imageName : null,
             'credits' => $this->faker->optional(0.7)->name(),
             'visible' => $this->faker->boolean(85), // 85% Wahrscheinlichkeit für true
+            'for_social_media' => $this->faker->boolean(20),
             'position' => $this->faker->optional(0.6)->randomElement([
                 'StartSeiteSlide',
                 'Galerie',

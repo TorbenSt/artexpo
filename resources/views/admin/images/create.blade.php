@@ -86,6 +86,20 @@
                     </label>
                 </div>
 
+                <div class="mb-6">
+                    <label class="flex items-center">
+                        {{-- Hidden input to ensure a value is always sent when unchecked --}}
+                        <input type="hidden" name="for_social_media" value="0">
+                        <input type="checkbox" name="for_social_media" value="1"
+                               {{ old('for_social_media', false) ? 'checked' : '' }}
+                               class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <span class="ml-2 text-sm font-medium text-gray-700">Für Social Media freigegeben</span>
+                    </label>
+                    @error('for_social_media')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <div class="flex justify-end space-x-4">
                     <a href="{{ route('images.index') }}" 
                        class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">

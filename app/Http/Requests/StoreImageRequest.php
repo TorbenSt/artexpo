@@ -28,6 +28,7 @@ class StoreImageRequest extends FormRequest
             'position' => 'nullable|string|max:50',
             'credits' => 'nullable|string',
             'visible' => 'boolean',
+            'for_social_media' => 'boolean',
         ];
     }
 }

@@ -81,6 +81,7 @@ class ImageController extends Controller
         $position = $request->input('position');
         $credits = $request->input('credits');
         $visible = $request->boolean('visible', true);
+    $forSocial = $request->boolean('for_social_media', false);
 
         $exhibition = Exhibition::findOrFail($exhibitionId);
 
@@ -105,6 +106,7 @@ class ImageController extends Controller
             'credits' => $credits,
             'visible' => $visible,
             'position' => $position,
+            'for_social_media' => $forSocial,
         ]);
 
         return redirect()->route('images.index')->with('success', 'Bild erfolgreich hochgeladen');
@@ -132,7 +134,7 @@ class ImageController extends Controller
      */
     public function update(UpdateImageRequest $request, Image $image)
     {
-        $data = $request->only(['position', 'credits', 'visible', 'type']);
+    $data = $request->only(['position', 'credits', 'visible', 'type', 'for_social_media']);
 
         if ($request->hasFile('image')) {
             // Alte Dateien löschen

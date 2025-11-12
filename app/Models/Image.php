@@ -17,11 +17,13 @@ class Image extends Model
         'original_path', 
         'credits', 
         'visible', 
-        'position'
+        'position',
+        'for_social_media'
     ];
 
     protected $casts = [
         'visible' => 'boolean',
+        'for_social_media' => 'boolean',
     ];
 
     // Type: 'public' oder 'press'
