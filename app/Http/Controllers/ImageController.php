@@ -11,6 +11,7 @@ use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Imagick\Driver;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ImageController extends Controller
@@ -23,7 +24,7 @@ class ImageController extends Controller
         $query = Image::with('exhibition');
         
         // Für öffentliche Ansicht: nur sichtbare Bilder anzeigen
-        if (!auth()->check()) {
+        if (!Auth::check()) {
             $query->where('visible', true);
         }
         
@@ -38,7 +39,7 @@ class ImageController extends Controller
         }
         
         // Filter nach Sichtbarkeit (nur für angemeldete Benutzer)
-        if ($request->filled('visible') && auth()->check()) {
+        if ($request->filled('visible') && Auth::check()) {
             $query->where('visible', $request->boolean('visible'));
         }
         
@@ -52,7 +53,7 @@ class ImageController extends Controller
         $exhibitions = Exhibition::all();
         
         // Unterscheidung zwischen öffentlicher und Admin-Ansicht
-        if (auth()->check()) {
+        if (Auth::check()) {
             return view('admin.images.index', compact('images', 'exhibitions'));
         } else {
             return view('images.index', compact('images', 'exhibitions'));

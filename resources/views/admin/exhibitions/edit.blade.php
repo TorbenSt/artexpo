@@ -148,6 +148,20 @@
                     </div>
                 </div>
 
+                <!-- Social Media Generation -->
+                @if($exhibition->images()->where('for_social_media', true)->exists())
+                    <div class="bg-white shadow rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-semibold mb-4">Social Media</h3>
+                        <form method="POST" action="{{ route('admin.exhibitions.generate-social-media-posts', $exhibition) }}">
+                            @csrf
+                            <button type="submit" 
+                                    class="w-full bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                                Social Media Posts generieren
+                            </button>
+                        </form>
+                    </div>
+                @endif
+
                 <!-- Aktuelle Bilder -->
                 <div class="bg-white shadow rounded-lg p-6">
                     <h3 class="text-lg font-semibold mb-4">Aktuelle Bilder ({{ $exhibition->images->count() }})</h3>

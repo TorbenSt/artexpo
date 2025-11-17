@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Exhibition;
 use App\Http\Requests\StoreExhibitionRequest;
 use App\Http\Requests\UpdateExhibitionRequest;
+use App\Jobs\GenerateSocialMediaPostsJob;
 use Illuminate\Http\Request;
 
 class ExhibitionController extends Controller
@@ -73,5 +74,22 @@ class ExhibitionController extends Controller
 
         return redirect()->route('dashboard')
             ->with('success', 'Exhibition deleted successfully.');
+    }
+
+    /**
+     * Generate social media posts for all marked images.
+     */
+    public function generateSocialMediaPosts(Exhibition $exhibition)
+    {
+        $images = $exhibition->images()->where('for_social_media', true)->get();
+        
+        $count = 0;
+        foreach ($images as $image) {
+            GenerateSocialMediaPostsJob::dispatch($image);
+            $count++;
+        }
+
+        return redirect()->back()
+            ->with('success', "Social media post generation started for {$count} image(s).");
     }
 }

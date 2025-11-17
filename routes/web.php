@@ -31,6 +31,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('exhibitions', ExhibitionController::class)
             ->except(['index', 'show']); // nur create, store, edit, update, destroy
         
+        // Social Media Generation
+        Route::post('exhibitions/{exhibition}/generate-social-media-posts', [ExhibitionController::class, 'generateSocialMediaPosts'])
+            ->name('exhibitions.generate-social-media-posts');
+        
         // Images Management  
         Route::resource('images', ImageController::class)
             ->except(['index', 'show']);
