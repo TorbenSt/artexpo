@@ -2,11 +2,13 @@
 
 namespace App\Jobs;
 
+use App\AI\Rag\FunFactsRetriever;
 use App\Models\Image;
 use App\Models\SocialMediaPost;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\Log;
 use OpenAI;
 
 class GenerateSocialMediaPostsJob implements ShouldQueue
@@ -38,6 +40,7 @@ class GenerateSocialMediaPostsJob implements ShouldQueue
                 ]);
 
                 $content = $response->choices[0]->message->content;
+                $content = $this->enforceNetworkRules($network, $content);
 
                 SocialMediaPost::create([
                     'image_id' => $this->image->id,
@@ -45,7 +48,19 @@ class GenerateSocialMediaPostsJob implements ShouldQueue
                     'content' => $content,
                     'status' => 'draft',
                 ]);
+
+                Log::info("Generated social media post", [
+                    'image_id' => $this->image->id,
+                    'network' => $network,
+                    'exhibition' => $exhibition->title,
+                ]);
             } catch (\Exception $e) {
+                Log::error("Failed to generate social media post", [
+                    'image_id' => $this->image->id,
+                    'network' => $network,
+                    'error' => $e->getMessage(),
+                ]);
+
                 SocialMediaPost::create([
                     'image_id' => $this->image->id,
                     'network' => $network,
@@ -67,6 +82,28 @@ class GenerateSocialMediaPostsJob implements ShouldQueue
 
         $name = $networkNames[$network] ?? $network;
 
+        // Build fun facts query
+        $query = $this->buildFunFactsQuery($exhibition, $image);
+        $funFacts = app(FunFactsRetriever::class)
+            ->withContext($image->id, $network)
+            ->retrieveWithFallback($query, 6);
+
+        // Format fun facts section
+        $funFactsBlock = '';
+        if (!empty($funFacts)) {
+            $funFactsBlock = "\n\nFUN FACTS (verifizierte Quellen):\n";
+            foreach ($funFacts as $index => $fact) {
+                $funFactsBlock .= ($index + 1) . ". {$fact['text']}\n";
+                $funFactsBlock .= "   Quelle: {$fact['source']} - {$fact['title']}\n";
+                if ($fact['url']) {
+                    $funFactsBlock .= "   URL: {$fact['url']}\n";
+                }
+            }
+            $funFactsBlock .= "\nVerwende diese Fun Facts, wenn sie relevant sind. Erfinde keine Fakten, die nicht in den obigen Quellen stehen!";
+        } else {
+            $funFactsBlock = "\n\nKeine Fun Facts verfügbar. Erstelle einen generischen Post ohne erfundene Fakten.";
+        }
+
         return "Erstelle einen Social-Media-Post für **{$name}** über die Ausstellung:
 
         Titel: {$exhibition->title}
@@ -78,8 +115,41 @@ class GenerateSocialMediaPostsJob implements ShouldQueue
         - Credits: {$image->credits}
         - Position: {$image->position}
 
-        Schreibe einen **ansprechenden, kurzen Post** (max. 280 Zeichen für X, sonst bis 600).  
-        Verwende Emojis, Call-to-Action (z. B. 'Jetzt Tickets sichern!') und Hashtags (#Kunst #Museum #{$exhibition->title}).  
+        {$funFactsBlock}
+
+        Schreibe einen **ansprechenden, kurzen Post** (max. 280 Zeichen für X, sonst bis 600).
+        Verwende Emojis, Call-to-Action (z. B. 'Jetzt Tickets sichern!') und Hashtags (#Kunst #Museum #{$exhibition->title}).
         Füge Bildunterschrift ein, falls nötig.";
+    }
+
+    /**
+     * Build query for fun facts retrieval.
+     */
+    private function buildFunFactsQuery($exhibition, $image): string
+    {
+        $parts = [
+            $exhibition->artist ?? '',
+            $exhibition->title ?? '',
+            $image->credits ?? '',
+        ];
+
+        // Filter out empty parts and join
+        $parts = array_filter($parts);
+        return implode(' ', $parts);
+    }
+
+    /**
+     * Enforce network character limits.
+     */
+    private function enforceNetworkRules(string $network, string $content): string
+    {
+        $limits = config('socialmedia.limits', []);
+        $limit = $limits[$network] ?? null;
+
+        if ($limit && strlen($content) > $limit) {
+            return substr($content, 0, $limit - 3) . '...';
+        }
+
+        return $content;
     }
 }
