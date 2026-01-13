@@ -10,7 +10,8 @@ test('image has correct fillable attributes', function () {
         'original_path',
         'credits',
         'visible',
-        'position'
+        'position',
+        'for_social_media'
     ];
     
     $image = new Image();
