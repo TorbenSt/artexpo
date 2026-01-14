@@ -1,5 +1,12 @@
 # ArtExpo – Domain-Driven Exhibition Management with AI-Assisted Social Media
 
+![PHP](https://img.shields.io/badge/PHP-8.2-blue)
+![Laravel](https://img.shields.io/badge/Laravel-12-red)
+![AI](https://img.shields.io/badge/AI-OpenAI-blueviolet)
+![Tests](https://img.shields.io/badge/tests-passing-success)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+
 ArtExpo is a Laravel-based system originating from real-world museum work.
 Its core idea is to model an **exhibition as a structured domain object**
 — not as a single website — and distribute its content consistently across
